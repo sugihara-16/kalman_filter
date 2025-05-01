@@ -84,28 +84,28 @@ public:
   virtual const Eigen::VectorXd filterFunction(const Eigen::VectorXd& input) = 0;
 
   /* overwrite function for 1 dimension */
-  virtual double filterFunction(const double& input)
+  virtual const double filterFunction(const double& input)
   {
     Eigen::VectorXd in(1);
     in << input;
     return filterFunction(in)(0);
   }
 
-  /* overwrite function for 3 dimension: geometry_msgs::msg::Vector3*/
-  virtual geometry_msgs::msg::Vector3 filterFunction(const geometry_msgs::msg::Vector3& input)
-  {
-    Eigen::Vector3d input_vec;
-    tf2::fromMsg(input, input_vec);
-    Eigen::Vector3d out_e = filterFunction(input_vec);
-    geometry_msgs::msg::Vector3 out;
-    out.x = out_e.x();
-    out.y = out_e.y();
-    out.z = out_e.z();
-    return out;
-  }
+  // /* overwrite function for 3 dimension: geometry_msgs::msg::Vector3*/
+  // virtual const geometry_msgs::msg::Vector3 filterFunction(const geometry_msgs::msg::Vector3& input)
+  // {
+  //   Eigen::Vector3d input_vec;
+  //   tf2::fromMsg(input, input_vec);
+  //   Eigen::Vector3d out_e = filterFunction(input_vec);
+  //   geometry_msgs::msg::Vector3 out;
+  //   out.x = out_e.x();
+  //   out.y = out_e.y();
+  //   out.z = out_e.z();
+  //   return out;
+  // }
 
   /* overwrite function for 3 dimension: geometry_msgs::Point */
-  virtual geometry_msgs::msg::Point filterFunction(const geometry_msgs::msg::Point& input)
+  virtual const geometry_msgs::msg::Point filterFunction(const geometry_msgs::msg::Point& input)
   {
     Eigen::Vector3d input_vec;
     tf2::fromMsg(input, input_vec);
@@ -176,6 +176,8 @@ public:
     pre1_ = reg_pos;
     return out;
   }
+
+  const double filterFunction(const double& input) {return  LowPassFilter::filterFunction(input); }
 };
 
 class FirFilter : public LowPassFilter
@@ -208,6 +210,7 @@ public:
     output_val_ += filter_factor_ * (input - output_val_);
     return output_val_;
   }
+  const double filterFunction(const double& input) {return  LowPassFilter::filterFunction(input); }
 };
 
 class FirFilterQuaternion
