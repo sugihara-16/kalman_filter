@@ -14,11 +14,8 @@ find_package(tf2_eigen REQUIRED)
 
 find_package(rclcpp REQUIRED)
 
-add_library(lpf_filter INTERFACE)
-target_include_directories(lpf_filter INTERFACE
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-  ${EIGEN3_INCLUDE_DIRS}
+include_directories(
+  include
 )
 
 add_library(kf_pos_vel_acc_plugin SHARED
@@ -47,10 +44,6 @@ add_executable(lpf_test
   src/lpf_test.cpp
 )
 
-target_link_libraries(lpf_test
-  lpf_filter
-)
-
 ament_target_dependencies(lpf_test
   geometry_msgs
   tf2_eigen
@@ -61,14 +54,14 @@ install(
   )
 
 add_executable(kf_plugin_test src/kf_plugin_test.cpp)
-target_link_libraries(kf_plugin_test
-  lpf_filter
-)
 
 ament_target_dependencies(kf_plugin_test
   rclcpp
+  tf2_eigen
   pluginlib
-)
+  )
+
+ament_export_include_directories(include)
 
 install(
   TARGETS kf_plugin_test
